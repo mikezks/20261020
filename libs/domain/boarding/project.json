@@ -4,7 +4,10 @@
   "sourceRoot": "libs/domain/boarding/src",
   "prefix": "app",
   "projectType": "library",
-  "tags": [],
+  "tags": [
+    "domain:boarding",
+    "type:lib"
+  ],
   "targets": {
     "build": {
       "executor": "@nx/angular:ng-packagr-lite",

@@ -27,6 +27,38 @@ export default [
                     ],
                     depConstraints: [
                         {
+                            sourceTag: "domain:booking",
+                            onlyDependOnLibsWithTags: [
+                                "domain:booking",
+                                "domain:checkin",
+                                "domain:shared"
+                            ]
+                        },
+                        {
+                            sourceTag: "domain:boarding",
+                            onlyDependOnLibsWithTags: [
+                                "domain:boarding",
+                                "domain:shared"
+                            ]
+                        },
+                        {
+                            sourceTag: "type:feature",
+                            onlyDependOnLibsWithTags: [
+                                "type:api",
+                                "type:ui",
+                                "type:logic",
+                                "type:util",
+                                "type:model"
+                            ]
+                        },
+                        {
+                            sourceTag: "type:ui",
+                            onlyDependOnLibsWithTags: [
+                                "type:util",
+                                "type:model"
+                            ]
+                        },
+                        {
                             sourceTag: "*",
                             onlyDependOnLibsWithTags: [
                                 "*"

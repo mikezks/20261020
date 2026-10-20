@@ -4,7 +4,9 @@
   "sourceRoot": "libs/domain/checkin/src",
   "prefix": "app",
   "projectType": "library",
-  "tags": [],
+  "tags": [
+    "domain:checkin"
+  ],
   "targets": {
     "build": {
       "executor": "@nx/angular:ng-packagr-lite",

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MilesComponent } from '@flight-demo/domain/checkin';
 import { Flight } from '../../logic-flight/model/flight';
 import { FlightFilter } from '../../logic-flight/model/flight-filter';
 import { injectTicketsFacade } from '../../logic-flight/state/facade';
@@ -16,7 +17,8 @@ import { FlightFilterComponent } from '../../ui-flight/flight-filter/flight-filt
     CommonModule,
     FormsModule,
     FlightCardComponent,
-    FlightFilterComponent
+    FlightFilterComponent,
+    MilesComponent
   ],
   templateUrl: './flight-search.component.html',
 })
