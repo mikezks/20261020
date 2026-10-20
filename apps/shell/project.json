@@ -12,6 +12,7 @@
         "{options.outputPath}"
       ],
       "defaultConfiguration": "production",
+      "dependsOn": [],
       "options": {
         "outputPath": "dist/apps/shell",
         "browser": "apps/shell/src/main.ts",
@@ -58,8 +59,7 @@
           "extractLicenses": false,
           "sourceMap": true
         }
-      },
-      "dependsOn": []
+      }
     },
     "serve": {
       "continuous": true,
