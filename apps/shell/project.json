@@ -7,6 +7,53 @@
   "tags": [],
   "targets": {
     "build": {
+      "executor": "@angular-architects/native-federation:build",
+      "options": {
+        "cacheExternalArtifacts": true,
+        "tsConfig": "apps/shell/tsconfig.federation.json"
+      },
+      "configurations": {
+        "production": {
+          "target": "shell:esbuild:production"
+        },
+        "development": {
+          "target": "shell:esbuild:development",
+          "dev": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-architects/native-federation:build",
+      "options": {
+        "target": "shell:serve-original:development",
+        "tsConfig": "apps/shell/tsconfig.federation.json",
+        "rebuildDelay": 500,
+        "cacheExternalArtifacts": true,
+        "dev": true,
+        "devServer": true,
+        "port": 0
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@angular/build:unit-test",
+      "options": {
+        "watch": false
+      }
+    },
+    "serve-static": {
+      "continuous": true,
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "shell:build",
+        "staticFilePath": "dist/apps/shell/browser",
+        "spa": true
+      }
+    },
+    "esbuild": {
       "executor": "@angular/build:application",
       "outputs": [
         "{options.outputPath}"
@@ -28,6 +75,9 @@
           "@angular/material/prebuilt-themes/indigo-pink.css",
           "@angular-architects/paper-design/assets/css/bootstrap.css",
           "apps/shell/src/styles.scss"
+        ],
+        "polyfills": [
+          "es-module-shims"
         ]
       },
       "configurations": {
@@ -61,35 +111,20 @@
         }
       }
     },
-    "serve": {
+    "serve-original": {
       "continuous": true,
       "executor": "@angular/build:dev-server",
       "defaultConfiguration": "development",
       "configurations": {
         "production": {
-          "buildTarget": "shell:build:production"
+          "buildTarget": "shell:esbuild:production"
         },
         "development": {
-          "buildTarget": "shell:build:development"
+          "buildTarget": "shell:esbuild:development"
         }
-      }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint"
-    },
-    "test": {
-      "executor": "@angular/build:unit-test",
+      },
       "options": {
-        "watch": false
-      }
-    },
-    "serve-static": {
-      "continuous": true,
-      "executor": "@nx/web:file-server",
-      "options": {
-        "buildTarget": "shell:build",
-        "staticFilePath": "dist/apps/shell/browser",
-        "spa": true
+        "port": 4200
       }
     }
   }

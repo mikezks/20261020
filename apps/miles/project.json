@@ -8,6 +8,7 @@
   "targets": {
     "build": {
       "executor": "@angular-architects/native-federation:build",
+      "defaultConfiguration": "production",
       "options": {
         "cacheExternalArtifacts": true,
         "tsConfig": "apps/miles/tsconfig.federation.json"
@@ -20,8 +21,7 @@
           "target": "miles:esbuild:development",
           "dev": true
         }
-      },
-      "defaultConfiguration": "production"
+      }
     },
     "serve": {
       "executor": "@angular-architects/native-federation:build",
@@ -104,6 +104,9 @@
       "continuous": true,
       "executor": "@angular/build:dev-server",
       "defaultConfiguration": "development",
+      "options": {
+        "port": 4202
+      },
       "configurations": {
         "production": {
           "buildTarget": "miles:esbuild:production"
@@ -111,9 +114,6 @@
         "development": {
           "buildTarget": "miles:esbuild:development"
         }
-      },
-      "options": {
-        "port": 4202
       }
     }
   }
