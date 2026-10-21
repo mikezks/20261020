@@ -5,6 +5,7 @@ import { Flight } from '../../logic-flight/model/flight';
 import { injectTicketsFacade } from '../../logic-flight/state/facade';
 import { FlightCardComponent } from '../../ui-flight/flight-card/flight-card.component';
 import { FlightFilterComponent } from '../../ui-flight/flight-filter/flight-filter.component';
+import { ReactiveNode, SIGNAL } from '@angular/core/primitives/signals';
 
 
 @Component({
@@ -34,17 +35,19 @@ export class FlightSearchComponent {
     3: true,
     5: true
   };
-  protected flights$ = this.ticketsFacade.flights$;
+  protected flights = this.ticketsFacade.flights;
 
   constructor() {
-    const loggerEffect = effect(() => console.log(this.route()));
-    setTimeout(() => loggerEffect.destroy(), 5_000);
-    
+    let activeConsumer: ReactiveNode | null = null;
+    activeConsumer = effect(() => console.log(this.route()));
+
     // Effect behavior w/ explicit Signal dependencies
     effect(() => {
       this.filter();
       untracked(() => this.search());
     });
+
+    console.log(this.route[SIGNAL]);
   }
 
   protected search(): void {
