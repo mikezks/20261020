@@ -37,7 +37,8 @@ export class FlightSearchComponent {
   protected flights$ = this.ticketsFacade.flights$;
 
   constructor() {
-    effect(() => console.log(this.route()));
+    const loggerEffect = effect(() => console.log(this.route()));
+    setTimeout(() => loggerEffect.destroy(), 5_000);
     
     // Effect behavior w/ explicit Signal dependencies
     effect(() => {
