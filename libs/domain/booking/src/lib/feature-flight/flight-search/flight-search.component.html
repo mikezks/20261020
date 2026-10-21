@@ -6,7 +6,7 @@
 
     <div class="card-body">
       <app-flight-filter
-        [filter]="filter"
+        [filter]="filter()"
         (searchTrigger)="search($event)"
       >
         @if (flights.length) {
@@ -20,11 +20,12 @@
           >Reset</button>
         }
       </app-flight-filter>
+      <p>{{ route() }}</p>
     </div>
   </div>
 
   <div class="row">
-    @for (flight of flights; track flight) {
+    @for (flight of flights; track flight.id) {
       <div class="col-xs-12 col-sm-6 col-md-4">
         <app-flight-card
           [item]="flight"
