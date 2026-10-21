@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, signal, untracked } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Flight } from '../../logic-flight/model/flight';
 import { FlightFilter } from '../../logic-flight/model/flight-filter';
@@ -39,15 +39,37 @@ export class FlightSearchComponent {
 
   constructor() {
     effect(() => console.log(this.route()));
+    
+    // Effect behavior w/ explicit Signal dependencies
+    effect(() => {
+      this.filter();
+      untracked(() => this.search());
+    });
+
+    // Signal update behavior
+    console.log(this.filter().from);
+    this.filter.update(curr => ({ ...curr, from: 'Barcelona' }));
+    console.log(this.filter().from);
+    this.filter.update(curr => ({ ...curr, from: 'Madrid' }));
+    console.log(this.filter().from);
+    this.filter.update(curr => ({ ...curr, from: 'Rom' }));
+    console.log(this.filter().from);
+    this.filter.update(curr => ({ ...curr, from: 'Mailand' }));
+    console.log(this.filter().from);
+    this.filter.update(curr => ({ ...curr, from: 'Oslo' }));
+    console.log(this.filter().from);
+
+    // Glitch-free behavior
+    const counter = signal(0);
+    const isEven = computed(() => counter() % 2 === 0);
+    effect(() => console.log({
+      counter: untracked(() => counter()),
+      isEven: isEven()
+    }));
+    setInterval(() => counter.update(curr => curr + 1), 2_000);
   }
 
-  protected search(filter: FlightFilter): void {
-    this.filter.set(filter);
-
-    if (!this.filter().from || !this.filter().to) {
-      return;
-    }
-
+  protected search(): void {
     this.ticketsFacade.search(this.filter());
   }
 
