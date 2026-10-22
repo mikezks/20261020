@@ -5,7 +5,7 @@
 1. Generate Monorepo:
 
     ```bash
-    npx ng g lib booking --project-root libs/domain/booking --entry-file index
+    npx ng new monorepo --no-create-application
     ```
 
 1. Generate Application:
