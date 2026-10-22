@@ -1,26 +1,26 @@
-import { ChangeDetectionStrategy, Component, inject, input, linkedSignal, numberAttribute } from '@angular/core';
-import { apply, debounce, form, FormField, FormRoot, required, schema, SchemaPath, validate, validateHttp } from '@angular/forms/signals';
+import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, numberAttribute } from '@angular/core';
+import { apply, createMetadataKey, debounce, form, FormField, FormRoot, metadata, required, schema, SchemaPath, validate, validateHttp } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
 import { Address, AddressControl, addressSchema, initialAddress } from '@flight-demo/shared/core';
 import { PassengerService } from '../../logic-passenger/data-access/passenger.service';
 import { Passenger } from '../../logic-passenger/model/passenger';
 
 
+export const ALLOWED_NAMES = createMetadataKey<string[]>();
+
 export function validateName(
   field: SchemaPath<string>,
-  allowedNames: string[],
   message: string
 ): void {
-  validate(field, ({ value }) =>
-    allowedNames.includes(value())
+  validate(field, ({ value, state }) => {
+    const allowedNames = state.metadata(ALLOWED_NAMES)?.() || [];
+    return allowedNames.includes(value())
       ? null
       : {
         kind: 'forbiddenLastname',
-        message: message
-          + ' Please use one of the following: '
-          + allowedNames.join(', ')
-      }
-  );
+        message
+    };
+  });
 }
 
 export function validateStatusAsync(
@@ -58,12 +58,16 @@ export function validateStatusAsync(
 const passengerSchema = schema<Passenger & {
   address: Address
 }>(passengerPath => {
+  metadata(passengerPath.name, ALLOWED_NAMES, () => [
+    'Smith', 'Johnson', 'Williams'
+  ]);
   required(passengerPath.name, {
     message: 'Please enter a lastname - this field is mandatory.'
   });
-  validateName(passengerPath.name, [
-    'Smith', 'Johnson', 'Williams'
-  ], 'This lastname is not allowed.');
+  validateName(
+    passengerPath.name,
+    'This lastname is not allowed.'
+  );
   validateStatusAsync(
     passengerPath.passengerStatus,
     './passenger.status.json'
@@ -102,6 +106,10 @@ export class PassengerEditComponent {
     this.passengerWithAddress,
     passengerSchema,
     { submission: { action: async () => this.save() }}
+  );
+
+  protected allowedLastnames = computed(
+    () => this.editForm.name().metadata(ALLOWED_NAMES)?.()?.join(', ') || ''
   );
 
   protected save(): void {
