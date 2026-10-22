@@ -1,44 +1,39 @@
-import { ChangeDetectionStrategy, Component, effect, inject, input, numberAttribute } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, inject, input, numberAttribute, signal } from '@angular/core';
+import { form, FormField } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
 import { PassengerService } from '../../logic-passenger/data-access/passenger.service';
-import { validatePassengerStatus } from '../../util-validation/passenger-validator/passenger-status.validator';
+import { initialPassenger } from '../../logic-passenger/model/passenger';
 
+// (3)
 
 @Component({
   // eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection -- preserves the workshop's pre-v22 behavior
   changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'app-passenger-edit',
   imports: [
-    ReactiveFormsModule,
+    // (4) UI Control: Template Binding
+    FormField,
     RouterLink
   ],
   templateUrl: './passenger-edit.component.html'
 })
 export class PassengerEditComponent {
-  private passengerService = inject(PassengerService);
-  protected editForm = inject(NonNullableFormBuilder).group({
-    id: [0],
-    firstName: [''],
-    name: [''],
-    bonusMiles: [0],
-    passengerStatus: ['', [
-      validatePassengerStatus(['A', 'B', 'C'])
-    ]]
+  private readonly passengerService = inject(PassengerService);
+
+  // (1) Data Model: Writable Signal
+  private readonly passenger = signal({
+    ...initialPassenger,
+    firstName: 'INIT'
   });
+  // (2) Field State: valid, dirty, touched, value
+  protected readonly editForm = form(this.passenger);
 
   protected id = input(0, { transform: numberAttribute });
   protected passengerResource = this.passengerService.findByIdAsResource(this.id);
 
-  constructor() {
-    effect(() => {
-      if (this.passengerResource.hasValue()) {
-        this.editForm.patchValue(this.passengerResource.value());
-      }
-    });
-  }
-
   protected save(): void {
-    console.log(this.editForm.value);
+    console.log(this.passenger());
+    console.log(this.editForm().value());
+    console.log(this.passengerResource.value());
   }
 }
