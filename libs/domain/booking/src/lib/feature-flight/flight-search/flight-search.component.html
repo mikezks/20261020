@@ -1,4 +1,4 @@
-@let flights = store.flights();
+@let flights = store.flightEntities();
 
 <div class="card">
   <div class="card-header">
@@ -30,9 +30,9 @@
       <app-flight-card
         [item]="flight"
         [selected]="store.basket()[flight.id]"
-        (delayTrigger)="delay($event)"
+        (selectedChange)="store.updateBasket(flight.id, $event)"
+        (delayTrigger)="store.delayFlight($event.id)"
       />
-      <!-- (selectedChange)="set -> basket()[flight.id]" -->
     </div>
   }
 </div>
