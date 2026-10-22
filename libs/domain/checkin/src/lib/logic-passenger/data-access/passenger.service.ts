@@ -2,7 +2,7 @@ import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
 import { Injectable, ResourceRef, Signal, inject, resource } from "@angular/core";
 import { rxResource } from "@angular/core/rxjs-interop";
 import { Observable } from "rxjs";
-import { Passenger } from "../model/passenger";
+import { initialPassenger, Passenger } from "../model/passenger";
 
 
 @Injectable({
@@ -51,13 +51,14 @@ export class PassengerService {
     });
   }
 
-  findByIdAsResource(id: Signal<number>): ResourceRef<Passenger | undefined> {
+  findByIdAsResource(id: Signal<number>): ResourceRef<Passenger> {
     return resource({
       params: id,
       loader: ({ params: id, abortSignal }) => fetch(
         [this.baseUrl, 'passenger', id].join('/'),
         { signal: abortSignal }
-      ).then(res => res.json() as Promise<Passenger>)
+      ).then(res => res.json() as Promise<Passenger>),
+      defaultValue: initialPassenger
     });
   }
 
