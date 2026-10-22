@@ -1,31 +1,35 @@
 import { ChangeDetectionStrategy, Component, inject, input, numberAttribute } from '@angular/core';
-import { form, FormField, required, schema, validate } from '@angular/forms/signals';
+import { form, FormField, required, schema, SchemaPath, validate } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
 import { PassengerService } from '../../logic-passenger/data-access/passenger.service';
 import { Passenger } from '../../logic-passenger/model/passenger';
 
+
+export function validateName(
+  field: SchemaPath<string>,
+  allowedNames: string[],
+  message: string
+): void {
+  validate(field, ({ value }) =>
+    allowedNames.includes(value())
+      ? null
+      : {
+        kind: 'forbiddenLastname',
+        message: message
+          + ' Please use one of the following: '
+          + allowedNames.join(', ')
+      }
+  );
+}
 
 // (3) Field Logic: validation, conditional readonly, hidden, disabled, metadata
 const passengerSchema = schema<Passenger>(passengerPath => {
   required(passengerPath.name, {
     message: 'Please enter a lastname - this field is mandatory.'
   });
-  validate(passengerPath.name, ({ value }) => {
-    const allowedLastnames = [
-      'Smith', 'Johnson', 'Williams'
-    ];
-    
-    if (allowedLastnames.includes(value())) {
-      return null;
-    }
-
-    return {
-      kind: 'forbiddenLastname',
-      message: 'This lastname is not allowed.'
-        + 'Please use one of the following: '
-        + allowedLastnames.join(', ')
-    };
-  });
+  validateName(passengerPath.name, [
+    'Smith', 'Johnson', 'Williams'
+  ], 'This lastname is not allowed.');
 });
 
 
