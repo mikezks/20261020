@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, input, numberAttribute } from '@angular/core';
-import { debounce, form, FormField, required, schema, SchemaPath, validate } from '@angular/forms/signals';
+import { debounce, form, FormField, FormRoot, required, schema, SchemaPath, validate } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
 import { PassengerService } from '../../logic-passenger/data-access/passenger.service';
 import { Passenger } from '../../logic-passenger/model/passenger';
@@ -40,7 +40,7 @@ const passengerSchema = schema<Passenger>(passengerPath => {
   selector: 'app-passenger-edit',
   imports: [
     // (4) UI Control: Template Binding
-    FormField,
+    FormField, FormRoot,
     RouterLink
   ],
   templateUrl: './passenger-edit.component.html'
@@ -54,7 +54,11 @@ export class PassengerEditComponent {
   protected passengerResource = this.passengerService.findByIdAsResource(this.id);
 
   // (2) Field State: valid, dirty, touched, value
-  protected readonly editForm = form(this.passengerResource.value, passengerSchema);
+  protected readonly editForm = form(
+    this.passengerResource.value,
+    passengerSchema,
+    { submission: { action: async () => this.save() }}
+  );
 
   protected save(): void {
     console.log(this.editForm().value());
