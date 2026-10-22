@@ -8,22 +8,31 @@ import { inject } from '@angular/core';
 import { FlightService } from '../data-access/flight.service';
 
 
+export interface BookingState {
+  filter: FlightFilter;
+  basket: Record<number, boolean>;
+  flights: Flight[];
+}
+
+export const initialBookingState: BookingState = {
+  filter: {
+    from: 'Hamburg',
+    to: 'Graz',
+    urgent: false
+  },
+  basket: {
+    2: true,
+    3: true,
+    5: true
+  },
+  flights: [],
+};
+
+
 export const BookingStore = signalStore(
   { providedIn: 'root' },
   // State
-  withState({
-    filter: {
-      from: 'Hamburg',
-      to: 'Graz',
-      urgent: false
-    },
-    basket: {
-      2: true,
-      3: true,
-      5: true
-    } as Record<number, boolean>,
-    flights: [] as Flight[]
-  }),
+  withState(initialBookingState),
   withComputed(store => ({
     delayed: () => store.flights().filter(flight => flight.delayed),
   })),

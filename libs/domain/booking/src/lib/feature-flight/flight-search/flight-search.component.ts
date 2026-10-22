@@ -23,13 +23,8 @@ import { FlightFilter } from '../../logic-flight/model/flight-filter';
 export class FlightSearchComponent {
   protected readonly store = inject(BookingStore);
 
-  protected filter = this.store.filter;
-  protected basket = this.store.basket;
-  protected flights = this.store.flights;
-
-  protected search(filter: FlightFilter): void {
-    this.store.setFilter(filter);
-    this.store.load(this.store.filter());
+  constructor() {
+    this.store.load(this.store.filter);
   }
 
   protected delay(flight: Flight): void {
