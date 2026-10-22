@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, inject, input, numberAttribute } from '@angular/core';
-import { debounce, form, FormField, FormRoot, required, schema, SchemaPath, validate } from '@angular/forms/signals';
+import { ChangeDetectionStrategy, Component, inject, input, linkedSignal, numberAttribute } from '@angular/core';
+import { apply, debounce, form, FormField, FormRoot, required, schema, SchemaPath, validate } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
+import { Address, AddressControl, addressSchema, initialAddress } from '@flight-demo/shared/core';
 import { PassengerService } from '../../logic-passenger/data-access/passenger.service';
 import { Passenger } from '../../logic-passenger/model/passenger';
 
@@ -23,7 +24,9 @@ export function validateName(
 }
 
 // (3) Field Logic: validation, conditional readonly, hidden, disabled, metadata
-const passengerSchema = schema<Passenger>(passengerPath => {
+const passengerSchema = schema<Passenger & {
+  address: Address
+}>(passengerPath => {
   required(passengerPath.name, {
     message: 'Please enter a lastname - this field is mandatory.'
   });
@@ -31,6 +34,7 @@ const passengerSchema = schema<Passenger>(passengerPath => {
     'Smith', 'Johnson', 'Williams'
   ], 'This lastname is not allowed.');
   debounce(passengerPath, 'blur');
+  apply(passengerPath.address, addressSchema);
 });
 
 
@@ -41,7 +45,8 @@ const passengerSchema = schema<Passenger>(passengerPath => {
   imports: [
     // (4) UI Control: Template Binding
     FormField, FormRoot,
-    RouterLink
+    RouterLink,
+    AddressControl
   ],
   templateUrl: './passenger-edit.component.html'
 })
@@ -52,16 +57,21 @@ export class PassengerEditComponent {
 
   // (1) Data Model: Writable Signal
   protected passengerResource = this.passengerService.findByIdAsResource(this.id);
+  private passengerWithAddress = linkedSignal(() => ({
+    ...this.passengerResource.value(),
+    address: initialAddress
+  }));
 
   // (2) Field State: valid, dirty, touched, value
   protected readonly editForm = form(
-    this.passengerResource.value,
+    this.passengerWithAddress,
     passengerSchema,
     { submission: { action: async () => this.save() }}
   );
 
   protected save(): void {
     console.log(this.editForm().value());
+    console.log(this.passengerWithAddress());
     console.log(this.passengerResource.value());
   }
 }
