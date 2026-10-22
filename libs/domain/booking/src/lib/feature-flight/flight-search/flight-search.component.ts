@@ -23,10 +23,6 @@ import { FlightFilter } from '../../logic-flight/model/flight-filter';
 export class FlightSearchComponent {
   protected readonly store = inject(BookingStore);
 
-  constructor() {
-    this.store.load(this.store.filter);
-  }
-
   protected delay(flight: Flight): void {
     const oldFlight = flight;
     const oldDate = new Date(oldFlight.date);
@@ -39,9 +35,5 @@ export class FlightSearchComponent {
     };
 
     // this.ticketsFacade.update(newFlight);
-  }
-
-  protected reset(): void {
-    this.store.setFlights([]);
   }
 }
