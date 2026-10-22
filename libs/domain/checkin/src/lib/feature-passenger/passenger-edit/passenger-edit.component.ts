@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, input, linkedSignal, numberAttribute } from '@angular/core';
-import { apply, debounce, form, FormField, FormRoot, required, schema, SchemaPath, validate } from '@angular/forms/signals';
+import { apply, debounce, form, FormField, FormRoot, required, schema, SchemaPath, validate, validateHttp } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
 import { Address, AddressControl, addressSchema, initialAddress } from '@flight-demo/shared/core';
 import { PassengerService } from '../../logic-passenger/data-access/passenger.service';
@@ -23,6 +23,37 @@ export function validateName(
   );
 }
 
+export function validateStatusAsync(
+  field: SchemaPath<string>,
+  url: string
+): void {
+  validateHttp(field, {
+    request: ({ value }) => ({
+      url,
+      params: { status: value() }
+    }),
+    onSuccess: (
+      response: {
+        status: string
+        valid: boolean;
+      },
+      { value }
+    ) => response.valid
+      ? null
+      : {
+        kind: 'statusNotAllowed',
+        message: `
+          The status ${ value() } is not correct. 
+          Use ${ response.status } instead.
+        `
+      },
+    onError: () => ({
+      kind: 'serverError',
+      message: 'Async validation failed.'
+    })
+  });
+}
+
 // (3) Field Logic: validation, conditional readonly, hidden, disabled, metadata
 const passengerSchema = schema<Passenger & {
   address: Address
@@ -33,6 +64,10 @@ const passengerSchema = schema<Passenger & {
   validateName(passengerPath.name, [
     'Smith', 'Johnson', 'Williams'
   ], 'This lastname is not allowed.');
+  validateStatusAsync(
+    passengerPath.passengerStatus,
+    './passenger.status.json'
+  );
   debounce(passengerPath, 'blur');
   apply(passengerPath.address, addressSchema);
 });

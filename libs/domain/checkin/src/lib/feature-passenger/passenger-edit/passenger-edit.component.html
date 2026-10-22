@@ -32,13 +32,17 @@
           class="form-control"
         />
       </div>
-
-      <app-address-subform [formField]="editForm.address" />
-
+      
       <div class="form-group">
         <label for="status">Status:</label>
         <input id="status" [formField]="editForm.passengerStatus" class="form-control" />
       </div>
+      @for (error of editForm.passengerStatus().errors(); track error.kind) {
+        <div class="alert alert-danger">{{ error.message }}</div>
+      }
+
+      <app-address-subform [formField]="editForm.address" />
+      
       <div class="form-group">
         <button
           type="submit"
