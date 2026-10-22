@@ -41,8 +41,8 @@ export const PassengerStore = signalStore(
   })),
   withProps(store => ({
     writableFilter: linkedSignal(
-      () => store.filter(),
-      { set: filter => store.setFilter(filter) }
+      store.filter,
+      { set: store.setFilter }
     ),
   }))
 );
