@@ -18,11 +18,7 @@ import { PassengerStore } from '../../logic-passenger/state/passenger.signal.sto
 export class PassengerSearchComponent {
   private store = inject(PassengerStore);
 
-  private passengerFilter = signal<PassengerFilter>({
-    firstname: '',
-    lastname: 'Smith'
-  });
-  protected filterForm = form(this.passengerFilter, filterPath => {
+  protected filterForm = form(this.store.writableFilter, filterPath => {
     required(filterPath.firstname, {
       message: 'Firstname or lastname need to be entered.',
       when: ({ valueOf }) => !valueOf(filterPath.lastname)
