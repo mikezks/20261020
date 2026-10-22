@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, input, numberAttribute } from '@angular/core';
-import { form, FormField, required, schema, SchemaPath, validate } from '@angular/forms/signals';
+import { debounce, form, FormField, required, schema, SchemaPath, validate } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
 import { PassengerService } from '../../logic-passenger/data-access/passenger.service';
 import { Passenger } from '../../logic-passenger/model/passenger';
@@ -30,6 +30,7 @@ const passengerSchema = schema<Passenger>(passengerPath => {
   validateName(passengerPath.name, [
     'Smith', 'Johnson', 'Williams'
   ], 'This lastname is not allowed.');
+  debounce(passengerPath, 'blur');
 });
 
 
