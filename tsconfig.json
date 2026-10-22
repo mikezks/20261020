@@ -3,6 +3,11 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "paths": {
+      "booking": [
+        "./dist/booking"
+      ]
+    },
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
@@ -21,5 +26,19 @@
     "strictInputAccessModifiers": true,
     "strictTemplates": true
   },
-  "files": []
+  "files": [],
+  "references": [
+    {
+      "path": "./apps/shell/tsconfig.app.json"
+    },
+    {
+      "path": "./apps/shell/tsconfig.spec.json"
+    },
+    {
+      "path": "./libs/domain/booking/tsconfig.lib.json"
+    },
+    {
+      "path": "./libs/domain/booking/tsconfig.spec.json"
+    }
+  ]
 }
